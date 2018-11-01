@@ -76,6 +76,19 @@ public:
     {
     }
 
+    int get_ip_count(VV_INT &ranges)
+    {
+        int cnt = 0;
+        for (int i = 0; i < ranges.size(); i++)
+        {
+            for (int ip_it = ranges[i][0]; ip_it <= ranges[i][1] ; ip_it++)
+            {
+                cnt++;
+            }
+        }
+        return cnt;
+    }
+
     void test_find_ranges(V_STR &test_ip_find, VV_INT &ranges)
     {
         m_ipfilter.find_ranges(m_ipfilter.ip_sorted_list, test_ip_find, ranges, 0);
@@ -94,8 +107,7 @@ BOOST_AUTO_TEST_CASE(ip_filter_test_star_find_ranges) // test *
 	VV_INT ranges;
 
 	tif_class.test_find_ranges(test_ip_find, ranges);
-	std::cout <<"TEEEEEEEEST  = " << ranges.size() << std::endl;
-    BOOST_CHECK(ranges.size() == 0);
+    BOOST_CHECK(tif_class.get_ip_count(ranges) == 2);
 
 }
 
