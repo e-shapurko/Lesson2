@@ -3,18 +3,18 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <vector>
-#include <thread>
+#include <cstring>
 #include "ip_filter.h"
-
-
+#include "UseBase.h"
 
 int main()
 {
+    std::string path = "./ip_filter.tsv";
+
     try
     {
         V_STR ip_list;
-        prepare_data_from_file(ip_list);
+        prepare_data_from_file(ip_list, path);
         ip_filter ipfilter(ip_list);
 
         VV_INT ranges;

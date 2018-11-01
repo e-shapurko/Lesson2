@@ -20,10 +20,6 @@ typedef unsigned int u_int;
 #define TRUE                    1
 #endif
 
-#ifndef INVALID_HANDLE_VALUE
-#define INVALID_HANDLE_VALUE    -1
-#endif
-
 #ifndef IN
 #define IN
 #endif
@@ -34,7 +30,7 @@ typedef unsigned int u_int;
 
 
 
-inline std::vector<std::string> split(const std::string &str, const char d)
+inline V_STR split(const std::string &str, const char d)
 {
     V_STR r;
 
@@ -53,11 +49,11 @@ inline std::vector<std::string> split(const std::string &str, const char d)
     return r;
 }
 
-inline bool prepare_data_from_file(OUT V_STR &data)
+inline bool prepare_data_from_file(IN V_STR &data, const std::string &path)
 {
     std::ifstream file;
     std::string line;
-    file.open("./ip_filter.tsv");
+    file.open(path);
     while(std::getline(file, line))
     {
         {

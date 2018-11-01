@@ -9,6 +9,7 @@ ip_filter::ip_filter(V_STR ip_list)
 }
 
 
+//  :)
 void ip_filter::write_to_console(const std::string &patern_str, const int &dir /*направление сортировки и шаг*/)
 {
     VV_INT ranges;
@@ -36,7 +37,6 @@ void ip_filter::write_to_console(const std::string &patern_str, const int &dir /
         {
             std::cout << convert_ip_vitos(ip_sorted_list[ip_it]) << std::endl;
         }
-
     }
 }
 
