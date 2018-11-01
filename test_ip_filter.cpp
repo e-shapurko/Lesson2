@@ -111,4 +111,57 @@ BOOST_AUTO_TEST_CASE(ip_filter_test_star_find_ranges) // test *
 
 }
 
+BOOST_AUTO_TEST_CASE(ip_filter_test_all_star_find_ranges) // test *
+{
+	
+	ip_filter ipfilter(test_ip_list);
+	test_ip_filter tif_class(ipfilter);
+	V_STR test_ip_find = {"*","*","*","*"};
+	VV_INT ranges;
+
+	tif_class.test_find_ranges(test_ip_find, ranges);
+    BOOST_CHECK(tif_class.get_ip_count(ranges) == 50);
+
+}
+
+BOOST_AUTO_TEST_CASE(ip_filter_test_any_find_ranges) // test ?
+{
+	
+	ip_filter ipfilter(test_ip_list);
+	test_ip_filter tif_class(ipfilter);
+	V_STR test_ip_find = {"?49","*","*","*"};
+	VV_INT ranges;
+
+	tif_class.test_find_ranges(test_ip_find, ranges);
+    BOOST_CHECK(tif_class.get_ip_count(ranges) == 1);
+
+}
+
+BOOST_AUTO_TEST_CASE(ip_filter_test_value_find_ranges) // test value
+{
+	
+	ip_filter ipfilter(test_ip_list);
+	test_ip_filter tif_class(ipfilter);
+	V_STR test_ip_find = {"65","208","151","112"};
+	VV_INT ranges;
+
+	tif_class.test_find_ranges(test_ip_find, ranges);
+    BOOST_CHECK(tif_class.get_ip_count(ranges) == 1);
+
+}
+
+BOOST_AUTO_TEST_CASE(ip_filter_test_all_types_find_ranges) // test value star and any
+{
+	
+	ip_filter ipfilter(test_ip_list);
+	test_ip_filter tif_class(ipfilter);
+	V_STR test_ip_find = {"65","?177","*","*"};
+	VV_INT ranges;
+
+	tif_class.test_find_ranges(test_ip_find, ranges);
+    BOOST_CHECK(tif_class.get_ip_count(ranges) == 3);
+
+}
+
+
 BOOST_AUTO_TEST_SUITE_END()
