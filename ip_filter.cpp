@@ -9,7 +9,7 @@ ip_filter::ip_filter(V_STR ip_list)
 }
 
 
-void ip_filter::write_to_console(const std::string &patern_str, const int &dir)
+void ip_filter::write_to_console(const std::string &patern_str, const int &dir /*направление сортировки и шаг*/)
 {
     VV_INT ranges;
     int start;
@@ -23,7 +23,7 @@ void ip_filter::write_to_console(const std::string &patern_str, const int &dir)
 
     find_ranges(ip_sorted_list, split(patern_str, '.'), ranges, 0);
 
-
+    // чтоб цикл получился двунаправленным
     start_range = (dir > 0) ? 0 : (ranges.size() - 1);
     stop_range = (dir > 0) ? (ranges.size() - 1) : 0;
 
@@ -107,7 +107,7 @@ void ip_filter::find_ranges(VV_INT &where_find, const V_STR &what_find, VV_INT &
     auto what_find_str = what_find[ip_part];
     if ((ip_part == FIRST_IP_PART) && (ranges.size() == 0))
     {
-        ranges.push_back({0, where_find.size() - 1}); //задание диапазона поиска если он не задан изначально;
+        ranges.push_back({0, (int)where_find.size() - 1}); //задание диапазона поиска если он не задан изначально;
     }
 
     if ((what_find_str == "*") && (ip_part != LAST_IP_PART))
@@ -123,13 +123,13 @@ void ip_filter::find_ranges(VV_INT &where_find, const V_STR &what_find, VV_INT &
     }
     else if(what_find_str.find_first_of("?") != std::string::npos)
     {
-        find_type &= FIND_ANY; // prioritetnaya operaciya - zatiraet FIND_ALL
+        find_type &= FIND_ANY; // приоретный флаг - затирает FIND_ALL
         what_find_str.replace(0, 1, "");
-        ranges_for_find.push_back({0, where_find.size() - 1});
+        ranges_for_find.push_back({0, (int)where_find.size() - 1});
     }
     else
     {
-        find_type &= FIND_VALUE; // prioritetnaya operaciya - zatiraet FIND_ALL
+        find_type &= FIND_VALUE; // приоретный флаг - затирает FIND_ALL
         ranges_for_find = ranges;
     }
 
@@ -140,7 +140,7 @@ void ip_filter::find_ranges(VV_INT &where_find, const V_STR &what_find, VV_INT &
     auto what_find_ip_part = std::stoi(what_find_str);
 
 
-    for (auto i = 0; i < ranges_for_find.size(); i++)
+    for (int i = 0; i < ranges_for_find.size(); i++)
     {
         start   = ranges_for_find[i][0];
         stop    = ranges_for_find[i][1];
@@ -178,7 +178,7 @@ void ip_filter::find_ranges(VV_INT &where_find, const V_STR &what_find, VV_INT &
     if (
             ((find_type == FIND_ANY) || (find_type == FIND_ANY_OR_VALUE))
             &&
-            (ip_part != FIRST_IP_PART) //esli copashimsya ne s pervim byte ip adresa
+            (ip_part != FIRST_IP_PART) //если копашимся не с первым байтом ip адреса
        )
         merge_ranges(ranges, temp_ranges);
     else
@@ -202,14 +202,14 @@ void ip_filter::merge_ranges(VV_INT &ranges, VV_INT &added_ranges)
     INT_ITR ranges_it = ranges.begin();
     INT_ITR added_ranges_it = added_ranges.begin();
 
-    //sortirovka po znacheniyou nachala diapazona
+    //сортировка по значению начала диапазона {{ot 3 - do 5}{4 - 19}{8 - 9}}
     while (1)
     {
         ranges_enabled = (ranges_it != ranges.end());
         added_ranges_enabled = (added_ranges_it != added_ranges.end());
 
         if ((added_ranges_enabled == true) and (ranges_enabled == false))
-        // esli zakonchilis diapazoni s chem mergimsya
+        // если закончился диапазаон с которым мерджимся
         {
             added_range = *added_ranges_it;
             temp_ranges.push_back(added_range);
@@ -217,7 +217,7 @@ void ip_filter::merge_ranges(VV_INT &ranges, VV_INT &added_ranges)
             continue;
         }
         else if ((added_ranges_enabled == false) and (ranges_enabled == true))
-        // esli zakonchilis diapazoni chto mergim
+        // если закончился диапазан который мерджим
         {
             range = *ranges_it;
             temp_ranges.push_back(range);
@@ -225,7 +225,7 @@ void ip_filter::merge_ranges(VV_INT &ranges, VV_INT &added_ranges)
             continue;
         }
         else if ((added_ranges_enabled == false) and (ranges_enabled == false))
-        // esli zakonchilis vse diapazoni
+        // если всё закончилось
         {
             break;
         }
@@ -246,56 +246,58 @@ void ip_filter::merge_ranges(VV_INT &ranges, VV_INT &added_ranges)
         }
     }
 
-    auto finding_new_range = true; //nahodimsya v sostoyanii poiska novogo diapazona
-    auto last_lap = false; //poslednyaya iteraciya
+    auto finding_new_range = true; //находимся в состоянии поиска максимумов и минимумов нового диапазона
+    auto last_lap = false; //последняя итерация
     int start;
     int stop;
 
-    //nahogdenie peresecheniy diapazonov i ih shlopivanie
-    for(u_int i = 0; i < temp_ranges.size();)
+    //нахождение пересечений диапазонов и их схлопывание.
+
+//    for(u_int i = 0; i < temp_ranges.size();)
+    for(VV_INT::iterator range = temp_ranges.begin(); range != temp_ranges.end();)
     {
-        last_lap = ((temp_ranges.size() - 1) == i);
+        last_lap = (range == (temp_ranges.end() - 1));
         if (finding_new_range == true)
         {
-            start = temp_ranges[i][0];
-            stop = temp_ranges[i][1];
+            start = (*range)[0];
+            stop = (*range)[1];
             if (last_lap == true)
                 result_ranges.push_back({start, stop});
             else
                 finding_new_range = false;
-            i++;
+            range++;
             continue;
         }
         else
         {
-            if (temp_ranges[i][0] == stop)
+            if ((*range)[0] == stop)
             {
-                stop = temp_ranges[i][1];
-                i++;
+                stop = (*range)[1];
+                range++;
                 continue;
             }
-            else if (temp_ranges[i][0] > stop)
+            else if ((*range)[0] > stop)
             {
                 result_ranges.push_back({start, stop});
                 finding_new_range = true;
                 continue;
             }
-            else if (temp_ranges[i][0] < stop)
+            else if ((*range)[0] < stop)
             {
-                if (temp_ranges[i][1] == stop)
+                if ((*range)[1] == stop)
                 {
-                    i++;
+                    range++;
                     continue;
                 }
-                else if (temp_ranges[i][1] > stop)
+                else if ((*range)[1] > stop)
                 {
-                    stop = temp_ranges[i][1];
-                    i++;
+                    stop = (*range)[1];
+                    range++;
                     continue;
                 }
-                else if (temp_ranges[i][1] < stop)
+                else if ((*range)[1] < stop)
                 {
-                    i++;
+                    range++;
                     continue;
                 }
             }
@@ -307,8 +309,8 @@ void ip_filter::merge_ranges(VV_INT &ranges, VV_INT &added_ranges)
 std::string ip_filter::convert_ip_vitos(const V_INT &int_ip)
 {
     std::string res = "";
-    std::string delimetr = "";
-    for (int i = 0; i < 4; i++)
+    auto delimetr = "";
+    for (auto i = 0; i < 4; i++)
     {
         res = res + delimetr + std::to_string(int_ip[i]);
         delimetr = ".";
@@ -346,7 +348,7 @@ void ip_filter::create_ip_sorted_lsit(V_STR ip_list)
     {
         ip_int_list = convert_vstovi(split(*ip, '.'));
         INT_ITR ins_it = ip_sorted_list.begin();
-        int place = find_place_for_insert(ip_sorted_list, ip_int_list, 0, ip_sorted_list.size() - 1, 0);
+        auto place = find_place_for_insert(ip_sorted_list, ip_int_list, 0, ip_sorted_list.size() - 1, 0);
         std::advance(ins_it, place);
         add_ip(ip_sorted_list, ins_it, ip_int_list);
     }
