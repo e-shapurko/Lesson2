@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_SUITE(ip_filter_test_suite)
 
 BOOST_AUTO_TEST_CASE(ip_filter_test_version)
 {
-    BOOST_CHECK(plug_::plug() == true);
+    BOOST_CHECK(plug_nsp::plug() == true);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
