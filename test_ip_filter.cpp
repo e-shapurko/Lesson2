@@ -70,9 +70,10 @@ BOOST_AUTO_TEST_SUITE(ip_filter_test_suite)
 
 BOOST_AUTO_TEST_CASE(ip_filter_test_star_find_ranges) // test *
 {
+	test_ip_filter tif_class;
 	V_STR test_ip_find = {"*","177","*","*"};
 	VV_INT ranges;
-	find_ranges(test_ip_list, test_ip_find, ranges, 0);
+	tif_class.find_ranges(test_ip_list, test_ip_find, ranges, 0);
     BOOST_CHECK(ranges.size() == 2);
 }
 
