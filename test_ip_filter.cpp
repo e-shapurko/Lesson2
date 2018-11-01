@@ -1,6 +1,8 @@
 #define BOOST_TEST_MODULE test_ip_filter
 
 #include "ip_filter.h"
+#include <cstdlib>
+#include <iostream>
 
 #include <boost/test/unit_test.hpp>
 
@@ -88,11 +90,12 @@ BOOST_AUTO_TEST_CASE(ip_filter_test_star_find_ranges) // test *
 	
 	ip_filter ipfilter(test_ip_list);
 	test_ip_filter tif_class(ipfilter);
-	V_STR test_ip_find = {"*","1777","*","*"};
+	V_STR test_ip_find = {"*","177","*","*"};
 	VV_INT ranges;
 
 	tif_class.test_find_ranges(test_ip_find, ranges);
     BOOST_CHECK(ranges.size() == 0);
+    std::cout << ranges.size() << std::endl;
 }
 
 BOOST_AUTO_TEST_SUITE_END()
