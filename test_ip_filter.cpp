@@ -90,12 +90,14 @@ BOOST_AUTO_TEST_CASE(ip_filter_test_star_find_ranges) // test *
 	
 	ip_filter ipfilter(test_ip_list);
 	test_ip_filter tif_class(ipfilter);
-	V_STR test_ip_find = {"*","177","*","*"};
+	auto test_ip_find_str = "*.177.*.*";
+	// V_STR test_ip_find = {"*","177","*","*"};
 	VV_INT ranges;
 
-	tif_class.test_find_ranges(test_ip_find, ranges);
+	tif_class.test_find_ranges(split(test_ip_find_str, '.'), ranges);
+	std::cout <<"TEEEEEEEEST  = " << ranges.size() << std::endl;
     BOOST_CHECK(ranges.size() == 0);
-    std::cout << ranges.size() << std::endl;
+
 }
 
 BOOST_AUTO_TEST_SUITE_END()
