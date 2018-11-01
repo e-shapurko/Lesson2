@@ -22,7 +22,7 @@ set_target_properties(test_ip_filter PROPERTIES
 ) 
 
 target_link_libraries(ip_filter
-    helloworld_lib
+    ip_filter_lib
 )
 
 target_link_libraries(test_ip_filter
