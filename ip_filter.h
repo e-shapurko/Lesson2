@@ -46,6 +46,7 @@ private:
 public:
     ip_filter(V_STR ip_list);
     void write_to_console(const std::string &patern_str, const int &dir = 1);
+    friend class test_ip_filter;
 
 };
 
