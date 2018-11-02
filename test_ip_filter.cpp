@@ -70,7 +70,7 @@ V_STR test_ip_list =
 class test_ip_filter
 {
 private:
-    ip_filter *m_ipfilter;
+    ip_filter m_ipfilter;
 public:
     test_ip_filter(ip_filter &ipfilter):m_ipfilter(ipfilter)
     {
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(ip_filter_test_star_find_ranges) // test *
 
 }
 
-BOOST_AUTO_TEST_CASE(ip_filter_test_all_star_find_ranges) // test all *
+BOOST_AUTO_TEST_CASE(ip_filter_test_all_star_find_ranges) // test *
 {
 	
 	ip_filter ipfilter(test_ip_list);
